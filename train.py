@@ -80,7 +80,6 @@ def photo_to_gray(im):
     im_blur=cv2.filter2D(im_bin,-1,kernel)
     ret,im_fin=cv2.threshold(im_blur,127,255,cv2.THRESH_BINARY)
     return im_fin
-# split captcha code into single characters
 #load all data 
 def load_data():
     filenames = os.listdir(sample_dir)
