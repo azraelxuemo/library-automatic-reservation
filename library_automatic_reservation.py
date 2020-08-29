@@ -4,7 +4,6 @@ Created on Wed Aug 26 19:29:14 2020
 
 @author: zhou
 """
-import glob
 import os
 import time
 import numpy as np
@@ -121,8 +120,11 @@ def get_code(im):
         label_id = int(results[0,0])#获得向量的坐标
         label = id_label_map[label_id]#找到对应的数字
         result.append(label)
-    e=result[0]+result[1]+result[2]+result[3]
-    return e
+    try:
+        e=result[0]+result[1]+result[2]+result[3]
+        return e
+    except:
+        return 0
 def yuyue(now,userid,passwd):
    daystart=datetime.datetime(2020, 8, 25)
    daypass=(now-daystart).days
@@ -132,7 +134,7 @@ def yuyue(now,userid,passwd):
    coo1=r.headers['Set-Cookie'].split(';')[0]
    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0','Accept': 'image/webp,*/*','Accept-Language': 'zh-CN,en-US;q=0.7,en;q=0.3','Accept-Encoding': 'gzip, deflate','Connection': 'close','Referer': 'http://10.203.97.155/home/book/index/type/4','Cookie': coo1,'Cache-Control': 'max-age=0'}
    r=requests.get('http://10.203.97.155/api.php/check',headers=headers)
-   i = Image.open(BytesIO(r.content))
+   i=Image.open(BytesIO(r.content))
    timestamp = int(time.time() * 1e6) 
    filename = "{}.png".format(timestamp)
    filepath = os.path.join('test', filename)
@@ -158,12 +160,16 @@ def yuyue(now,userid,passwd):
        pass
 
 a=input("你想要预约哪一天，请输入日期，格式为几月:几日")
+mon_you_want=a.split(':')[0]
+day_you_want=a.split(':')[1]
+a=input("你想要什么时候开始预约，请输入日期，格式为几月:几日")
 mon=a.split(':')[0]
 day=a.split(':')[1]
 a=input("你想要从什么时候开始预约，请输入事件，格式为18:30")
 hour=a.split(':')[0]
 min=a.split(':')[1]
 time_you_want=datetime.datetime(2020, int(mon), int(day),int(hour), int(min), 0)
+time_real=datetime.datetime(2020,int(mon_you_want),int(day_you_want))
 userid=input("请输入您的用户名")
 passwd=input("请输入您的密码")
 print(time_you_want)
@@ -173,7 +179,7 @@ while True:
     now=datetime.datetime.now()
     if flag==1 or  (time_you_want.day==now.day and time_you_want.month==now.month and time_you_want.hour==now.hour and time_you_want.minute==now.minute):
        flag=1
-       a=yuyue(now,userid,passwd)
+       a=yuyue(time_real,userid,passwd)
        if(a==1):
            print("成功抢到啦")
            sys.exit()
