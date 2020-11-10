@@ -13,6 +13,7 @@ import requests
 from PIL import Image
 from io import BytesIO
 import sys
+import hashlib
 
 
 sample_dir="label"
@@ -142,8 +143,10 @@ def yuyue(now,userid,passwd):
    im = cv2.imread(filepath)
    e= get_code(im)
    textlen=44+3-len(passwd)
+   hl = hashlib.md5()
+   hl.update(passwd.encode("utf-8"))
    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:80.0) Gecko/20100101 Firefox/80.0','Accept': 'application/json, text/javascript, */*; q=0.01','Accept-Language': 'zh-CN,en-US;q=0.7,en;q=0.3','Accept-Encoding': 'gzip, deflate','Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8','X-Requested-With': 'XMLHttpRequest','Content-Length': str(textlen),'Origin': 'http://10.203.97.155','Connection': 'close','Referer': 'http://10.203.97.155/home/book/index/type/4','Cookie': coo1}
-   data = {'username':userid,'password':passwd,'verify':str(e)}
+   data = {'username':userid,'password':hl.hexdigest(),'verify':str(e)}
    try:
        r=requests.post('http://10.203.97.155/api.php/login',data =data,headers=headers)
        coo=r.headers['Set-Cookie']
